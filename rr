@@ -1,0 +1,10 @@
+
+#!/bin/bash
+if [ "$#" == "0" ]
+then
+  echo "Error: You must provide an argument, which should be a name of a component."
+  echo "Example: \"./rr ProgramRunner\""
+else
+  chruby 2.5.1
+  rerun -c "./build && make ./bin/tests/$@Test && ./bin/tests/$@Test && ./bin/tests/$@Test" -p "**/$@{Test.cpp,.q.*}"
+fi
