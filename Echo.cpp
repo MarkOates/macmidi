@@ -1,3 +1,6 @@
+// This file retrieved from:
+// https://stackoverflow.com/questions/47660597/using-osx-core-midi-in-a-c-project
+
 /*  Copyright © 2007 Apple Inc. All Rights Reserved.
 
 Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
