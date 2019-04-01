@@ -1,6 +1,8 @@
 
 bin/*
+include/*
+src/*
+obj/*
 !bin/data/*
 .DS_Store
-obj/*
 .DS_Store
