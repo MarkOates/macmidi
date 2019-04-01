@@ -1,9 +1,9 @@
 
-#include <MacMidi.hpp>
+#include <MacMidiEnumerator.hpp>
 
 int main(int argc, char **argv)
 {
-   MacMidi mac_midi;
-   mac_midi.enumerate_devices();
+   MacMidiEnumerator mac_midi_enumerator;
+   mac_midi_enumerator.enumerate_devices();
    return 0;
 }
