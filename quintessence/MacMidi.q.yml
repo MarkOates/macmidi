@@ -1,0 +1,34 @@
+properties:
+  - name: initialized
+    type: bool
+    init_with: false
+  - name: midi_client_ref
+    type: MIDIClientRef
+    init_with: 0
+functions:
+  - name: initialize
+    type: void
+    body: |
+      if (initialized) return;
+      MIDIClientCreate(CFSTR("MIDI Echo"), NULL, NULL, &midi_client_ref);
+      initialized = true;
+  - name: get_num_devices
+    type: int
+    body: return MIDIGetNumberOfDevices();
+function_body_symbol_dependencies:
+  - MIDIPacketList*
+  - MIDIClientRef
+  - MIDIClientCreate
+  - MIDIGetNumberOfDevices
+  - std::runtime_error
+dependencies:
+  - symbol: MIDIPacketList*
+    headers: [ 'CoreMIDI/MIDIServices.h' ]
+  - symbol: MIDIClientRef
+    headers: [ 'CoreMIDI/MIDIServices.h' ]
+  - symbol: MIDIClientCreate
+    headers: [ 'CoreMIDI/MIDIServices.h' ]
+  - symbol: MIDIGetNumberOfDevices
+    headers: [ 'CoreMIDI/MIDIServices.h' ]
+  - symbol: std::runtime_error
+    headers: [ 'stdexcept' ]
