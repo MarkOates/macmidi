@@ -55,13 +55,13 @@ int main(void) {
          currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    // setup another note to play one second later with same loudness
-   notemessage[1] = 61;            // pitch = C#4
+   notemessage[1] = 67;            // pitch = G4
    timestamp += 1000000000;        // one billion nanoseconds later
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
           currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    // turn off the second note played one second later
-   notemessage[1] = 61;            // pitch = C#4
+   notemessage[1] = 67;            // pitch = G4
    notemessage[2] = 0;             // turn off the note
    timestamp += 1000000000;        // one billion nanoseconds later
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
