@@ -49,6 +49,8 @@ int main(void) {
    int channel_offset = 1;
    int channel_num_2 = (0x90 + channel_offset);
 
+   // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
+
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
    Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
