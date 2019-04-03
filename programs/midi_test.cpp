@@ -49,6 +49,8 @@ int main(void) {
    int channel_offset = 1;
    int channel_num_2 = (0x90 + channel_offset);
 
+#define pitch_diff -5
+
    // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
 
    // Prepare a MIDI Note-On message to send 
@@ -56,21 +58,21 @@ int main(void) {
    Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
-   Byte notemessage[MESSAGESIZE] = {0x90, 60, 90};
+   Byte notemessage[MESSAGESIZE] = {0x90, 60-pitch_diff, 90};
    notemessage[0] = channel_num;   // channel
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
          currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    // setup another note to play one second later with same loudness
    notemessage[0] = channel_num_2;   // channel
-   notemessage[1] = 67;            // pitch = G4
+   notemessage[1] = 67-pitch_diff;            // pitch = G4
    timestamp += 1000000000;        // one billion nanoseconds later
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
           currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    // turn off the second note played one second later
    notemessage[0] = channel_num_2;   // channel
-   notemessage[1] = 67;            // pitch = G4
+   notemessage[1] = 67-pitch_diff;            // pitch = G4
    notemessage[2] = 0;             // turn off the note
    timestamp += 1000000000;        // one billion nanoseconds later
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
@@ -78,7 +80,7 @@ int main(void) {
 
    // turn off the first note played one second later
    notemessage[0] = channel_num;   // channel
-   notemessage[1] = 60;            // pitch = C4
+   notemessage[1] = 60-pitch_diff;            // pitch = C4
    notemessage[2] = 0;             // turn off the note
    timestamp += 1000000000;        // one billion nanoseconds later
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
