@@ -17,11 +17,19 @@ functions:
     body: |
       if (initialized) return;
       MIDIClientCreate(CFSTR("MIDI Echo"), NULL, NULL, &midi_client_ref);
+      MIDIOutputPortCreate(midi_client_ref, CFSTR("Output port"), &midi_output_port);
+      if (MIDIGetNumberOfDevices() > 0) midi_destination = MIDIGetDestination(0);
+      else throw std::runtime_error("could not set midi_destination");
       initialized = true;
+  - name: send_packet
+    type: void
+    body: |
+      //MIDISend(gOutPort, gDest, pktlist);
 function_body_symbol_dependencies:
   - MIDIClientRef
   - MIDIEndpointRef
   - MIDIClientCreate
+  - std::runtime_error
 dependencies:
   - symbol: MIDIEndpointRef
     headers: [ 'CoreMIDI/MIDIServices.h' ]
@@ -31,3 +39,5 @@ dependencies:
     headers: [ 'CoreMIDI/MIDIServices.h' ]
   - symbol: MIDIClientCreate
     headers: [ 'CoreMIDI/MIDIServices.h' ]
+  - symbol: std::runtime_error
+    headers: [ 'stdexcept' ]
