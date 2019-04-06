@@ -26,20 +26,23 @@
 void playPacketListOnAllDevices   (MIDIPortRef     midiout, 
                                    const MIDIPacketList* pktlist);
 
+#define ZERO_NULL 0
+
 /////////////////////////////////////////////////////////////////////////
 
 int main(void) {
 
    // Prepare MIDI Interface Client/Port for writing MIDI data:
-   MIDIClientRef midiclient  = NULL;
-   MIDIPortRef   midiout     = NULL;
+   MIDIClientRef midiclient  = ZERO_NULL;
+   MIDIPortRef   midiout     = ZERO_NULL;
    OSStatus status;
-   if (status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient)) {
+
+   if ((status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient))) {
        printf("Error trying to create MIDI Client structure: %d\n", status);
        //printf("%s\n", GetMacOSStatusErrorString(status));
        exit(status);
    }
-   if (status = MIDIOutputPortCreate(midiclient, CFSTR("OuTpUt"), &midiout)) {
+   if ((status = MIDIOutputPortCreate(midiclient, CFSTR("OuTpUt"), &midiout))) {
        printf("Error trying to create MIDI output port: %d\n", status);
        //printf("%s\n", GetMacOSStatusErrorString(status));
        exit(status);
@@ -91,19 +94,19 @@ int main(void) {
    playPacketListOnAllDevices(midiout, packetlist);
    sleep(5);
 
-   if (status = MIDIPortDispose(midiout)) {
+   if ((status = MIDIPortDispose(midiout))) {
       printf("Error trying to close MIDI output port: %d\n", status);
       //printf("%s\n", GetMacOSStatusErrorString(status));
       exit(status);
    }
-   midiout = NULL;
+   midiout = ZERO_NULL;
 
-   if (status = MIDIClientDispose(midiclient)) {
+   if ((status = MIDIClientDispose(midiclient))) {
       printf("Error trying to close MIDI client: %d\n", status);
       //printf("%s\n", GetMacOSStatusErrorString(status));
       exit(status);
    }
-   midiclient = NULL;
+   midiclient = ZERO_NULL;
 
    printf("Program appears to have run successfully.");
 
@@ -130,8 +133,8 @@ void playPacketListOnAllDevices(MIDIPortRef midiout,
    MIDIEndpointRef dest;
    for(iDest=0; iDest<nDests; iDest++) {
       dest = MIDIGetDestination(iDest);
-      if (status = MIDISend(midiout, dest, pktlist)) {
-          printf("Problem sendint MIDI data on port %d\n", iDest);
+      if ((status = MIDISend(midiout, dest, pktlist))) {
+          printf("Problem sendint MIDI data on port %d\n", (int)iDest);
           //printf("%s\n", GetMacOSStatusErrorString(status));
           exit(status);
       }
