@@ -49,7 +49,7 @@ int main(void) {
    }
 
    int channel_num = (0x90);
-   int channel_offset = 1;
+   int channel_offset = 0;
    int channel_num_2 = (0x90 + channel_offset);
 
 #define pitch_diff -5
