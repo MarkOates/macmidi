@@ -30,46 +30,38 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 
 /////////////////////////////////////////////////////////////////////////
 
+#define BYTE unsigned char
 
-void play_note_on(MIDIPortRef &midiout, Byte pitch)
+
+void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
-   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
+   BYTE buffer[1024];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
-   Byte notemessage[MESSAGESIZE] = {0x90, pitch, 90};
-   //notemessage[0] = channel_num;   // channel
+   BYTE notemessage[MESSAGESIZE] = {0x90, pitch, velocity};
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    playPacketListOnAllDevices(midiout, packetlist);
 }
 
 
-void play_note_off(MIDIPortRef &midiout, Byte pitch)
+void play_note_off(MIDIPortRef &midiout, BYTE pitch)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
-   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
+   BYTE buffer[1024];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
 
    // Prepare a MIDI Note-OFF message to send 
-   Byte note_message_off[MESSAGESIZE] = {0x90, pitch, 0x00};
-   //note_message_off[0] = channel_num;   // channel
+   BYTE note_message_off[MESSAGESIZE] = {0x90, pitch, 0x00};
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, note_message_off);
 
    playPacketListOnAllDevices(midiout, packetlist);
-
-
-   
-   //Byte notemessage[MESSAGESIZE] = {0x90, 60-pitch_diff, 90};
-   ////notemessage[0] = channel_num;   // channel
-   //currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, notemessage);
-
-   //playPacketListOnAllDevices(midiout, packetlist);
 }
 
 
@@ -102,13 +94,13 @@ int main(void) {
 
    // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
 
-   Byte pitch = 60;
+   BYTE byte_pitch = 60;
 
-   play_note_on(midiout, pitch);
+   play_note_on(midiout, byte_pitch);
 
    sleep(0.5f);
 
-   play_note_off(midiout, pitch);
+   play_note_off(midiout, byte_pitch);
 
 
    /*
