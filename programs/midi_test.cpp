@@ -120,30 +120,41 @@ public:
       }
       midiclient = ZERO_NULL;
    }
+
+   void playPacketListOnAllDevices(MIDIPortRef midiout, 
+         const MIDIPacketList* pktlist) {
+      // send MIDI message to all MIDI output devices connected to computer:
+      std::cout << "Playing packet list..." << std::endl;
+      ItemCount nDests = MIDIGetNumberOfDestinations();
+      ItemCount iDest;
+      OSStatus status;
+      MIDIEndpointRef dest;
+      for(iDest=0; iDest<nDests; iDest++) {
+         dest = MIDIGetDestination(iDest);
+         if ((status = MIDISend(midiout, dest, pktlist))) {
+             printf("Problem sendint MIDI data on port %d\n", (int)iDest);
+             //printf("%s\n", GetMacOSStatusErrorString(status));
+             exit(status);
+         }
+      }
+      std::cout << "... Finished packet list." << std::endl;
+   }
 };
 
 
 
-int main(void) {
+int main(void)
+{
    MidiContext midi_context;
    midi_context.initialize();
 
-
-
    BYTE pitch = 60;
-
    play_note_on(midi_context.get_midiout(), pitch);
-
    sleep(0.5f);
-
    play_note_off(midi_context.get_midiout(), pitch);
 
-
-
    midi_context.shutdown();
-
    printf("Program appears to have run successfully.");
-
    return 0;
 }
 
