@@ -164,31 +164,3 @@ int main(void)
    return 0;
 }
 
-
-/////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////
-//
-// playPacketOnAllDevices -- play the list of MIDI packets
-//    on all MIDI output devices which the computer knows about.
-//    (Send the MIDI message(s) to all MIDI out ports).
-//
-
-void playPacketListOnAllDevices(MIDIPortRef midiout, 
-      const MIDIPacketList* pktlist) {
-   // send MIDI message to all MIDI output devices connected to computer:
-   std::cout << "Playing packet list..." << std::endl;
-   ItemCount nDests = MIDIGetNumberOfDestinations();
-   ItemCount iDest;
-   OSStatus status;
-   MIDIEndpointRef dest;
-   for(iDest=0; iDest<nDests; iDest++) {
-      dest = MIDIGetDestination(iDest);
-      if ((status = MIDISend(midiout, dest, pktlist))) {
-          printf("Problem sendint MIDI data on port %d\n", (int)iDest);
-          //printf("%s\n", GetMacOSStatusErrorString(status));
-          exit(status);
-      }
-   }
-   std::cout << "... Finished packet list." << std::endl;
-}
