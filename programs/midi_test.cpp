@@ -36,13 +36,12 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90)
 {
    // Prepare a MIDI Note-On message to send 
-   MIDITimeStamp timestamp = mach_absolute_time(); 
    BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
    BYTE notemessage[MESSAGESIZE] = {0x90, pitch, velocity};
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, notemessage);
+   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, mach_absolute_time(), MESSAGESIZE, notemessage);
 
    playPacketListOnAllDevices(midiout, packetlist);
 }
@@ -51,7 +50,6 @@ void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90)
 void play_note_off(MIDIPortRef &midiout, BYTE pitch)
 {
    // Prepare a MIDI Note-On message to send 
-   MIDITimeStamp timestamp = mach_absolute_time(); 
    BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
@@ -59,7 +57,7 @@ void play_note_off(MIDIPortRef &midiout, BYTE pitch)
 
    // Prepare a MIDI Note-OFF message to send 
    BYTE note_message_off[MESSAGESIZE] = {0x90, pitch, 0x00};
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, note_message_off);
+   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, mach_absolute_time(), MESSAGESIZE, note_message_off);
 
    playPacketListOnAllDevices(midiout, packetlist);
 }
