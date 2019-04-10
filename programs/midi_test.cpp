@@ -89,15 +89,16 @@ public:
    //    (Send the MIDI message(s) to all MIDI out ports).
    //
 
-   static void playPacketListOnAllDevices(MIDIPortRef midiout, 
-         const MIDIPacketList* pktlist) {
+   static void playPacketListOnAllDevices(MIDIPortRef midiout, const MIDIPacketList* pktlist)
+   {
       // send MIDI message to all MIDI output devices connected to computer:
       std::cout << "Playing packet list..." << std::endl;
       ItemCount nDests = MIDIGetNumberOfDestinations();
       ItemCount iDest;
       OSStatus status;
       MIDIEndpointRef dest;
-      for(iDest=0; iDest<nDests; iDest++) {
+      for(iDest=0; iDest<nDests; iDest++)
+      {
          dest = MIDIGetDestination(iDest);
          if ((status = MIDISend(midiout, dest, pktlist))) {
              printf("Problem sendint MIDI data on port %d\n", (int)iDest);
@@ -163,4 +164,3 @@ int main(void)
    printf("Program appears to have run successfully.");
    return 0;
 }
-
