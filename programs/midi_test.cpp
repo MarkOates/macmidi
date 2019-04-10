@@ -37,7 +37,7 @@ void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
-   BYTE buffer[1024];             // storage space for MIDI Packets (max 65536)
+   BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
@@ -52,7 +52,7 @@ void play_note_off(MIDIPortRef &midiout, BYTE pitch)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
-   BYTE buffer[1024];             // storage space for MIDI Packets (max 65536)
+   BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
