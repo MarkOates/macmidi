@@ -23,6 +23,8 @@
 #include <mach/mach_time.h>       /* for mach_absolute_time()            */
 #define MESSAGESIZE 3             /* byte count for MIDI note messages   */
 
+#include <vector>
+
 void playPacketListOnAllDevices   (MIDIPortRef     midiout, 
                                    const MIDIPacketList* pktlist);
 
@@ -160,6 +162,17 @@ public:
       sleep(0.5f);
       play_note_off(midi_context.get_midiout(), pitch);
    }
+
+   static void play_song_2(MidiContext &midi_context)
+   {
+      std::vector<BYTE> pitches = {60, 62, 64, 67, 60, 62, 64, 67};
+      for (auto &pitch : pitches)
+      {
+         play_note_on(midi_context.get_midiout(), pitch);
+         sleep(0.15f);
+         play_note_off(midi_context.get_midiout(), pitch);
+      }
+   }
 };
 
 
@@ -169,7 +182,7 @@ int main(void)
    MidiContext midi_context;
    midi_context.initialize();
 
-   SongFactory::play_song_1(midi_context);
+   SongFactory::play_song_2(midi_context);
 
    midi_context.shutdown();
    printf("Program appears to have run successfully.");
