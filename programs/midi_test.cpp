@@ -32,7 +32,24 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 
 /////////////////////////////////////////////////////////////////////////
 
+
 #define BYTE unsigned char
+
+
+class MidiNote
+{
+public:
+   BYTE pitch;
+   BYTE velocity;
+   BYTE channel;
+
+   MidiNote(BYTE pitch, BYTE velocity, BYTE channel)
+      : pitch(pitch)
+      , velocity(velocity)
+      , channel(channel)
+   {}
+};
+
 
 
 class PitchTransformer
@@ -221,6 +238,32 @@ public:
          play_note_off(midi_context.get_midiout(), pitch, cello_channel);
       }
    }
+
+   static void play_song_4(MidiContext &midi_context)
+   {
+      BYTE violin_channel = 0x00;
+      BYTE cello_channel = 0x03;
+      BYTE bass_channel = 0x04;
+
+      BYTE velocity = 60;
+
+      std::vector<MidiNote> notes = {
+         {60+7+7, velocity, violin_channel},
+         {60+7, velocity, violin_channel},
+         {60, velocity, violin_channel},
+         {60, velocity, violin_channel},
+         {60-7-12, velocity, cello_channel},
+         {60-7-12-5, velocity, bass_channel},
+      };
+
+      for (auto &note : notes)
+         play_note_on(midi_context.get_midiout(), note.pitch, note.velocity, note.channel);
+
+      sleep(3.0f);
+
+      for (auto &note : notes)
+         play_note_off(midi_context.get_midiout(), note.pitch, note.channel);
+   }
 };
 
 
@@ -230,7 +273,7 @@ int main(void)
    MidiContext midi_context;
    midi_context.initialize();
 
-   SongFactory::play_song_3(midi_context);
+   SongFactory::play_song_4(midi_context);
 
    midi_context.shutdown();
    printf("Program appears to have run successfully.");
