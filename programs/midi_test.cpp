@@ -33,10 +33,6 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 
 void play_note_on(MIDIPortRef &midiout)
 {
-   int channel_num = (0x90);
-   int channel_offset = 1;
-   int channel_num_2 = (0x90 + channel_offset);
-
 #define pitch_diff -5
 
    // Prepare a MIDI Note-On message to send 
@@ -55,10 +51,6 @@ void play_note_on(MIDIPortRef &midiout)
 
 void play_note_off(MIDIPortRef &midiout)
 {
-   int channel_num = (0x90);
-   int channel_offset = 1;
-   int channel_num_2 = (0x90 + channel_offset);
-
 #define pitch_diff -5
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
