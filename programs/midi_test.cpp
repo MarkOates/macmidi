@@ -101,6 +101,25 @@ public:
 
    MIDIPortRef &get_midiout() { return midiout; }
    MIDIClientRef &get_midiclient() { return midiclient; }
+
+   void shutdown()
+   {
+      OSStatus status;
+
+      if ((status = MIDIPortDispose(midiout))) {
+         printf("Error trying to close MIDI output port: %d\n", status);
+         //printf("%s\n", GetMacOSStatusErrorString(status));
+         exit(status);
+      }
+      midiout = ZERO_NULL;
+
+      if ((status = MIDIClientDispose(midiclient))) {
+         printf("Error trying to close MIDI client: %d\n", status);
+         //printf("%s\n", GetMacOSStatusErrorString(status));
+         exit(status);
+      }
+      midiclient = ZERO_NULL;
+   }
 };
 
 
