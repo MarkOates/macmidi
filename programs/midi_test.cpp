@@ -30,6 +30,63 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 
 /////////////////////////////////////////////////////////////////////////
 
+
+void play_note_on(MIDIPortRef &midiout)
+{
+   int channel_num = (0x90);
+   int channel_offset = 1;
+   int channel_num_2 = (0x90 + channel_offset);
+
+#define pitch_diff -5
+
+   // Prepare a MIDI Note-On message to send 
+   MIDITimeStamp timestamp = mach_absolute_time(); 
+   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
+   MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
+   MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
+
+   Byte notemessage[MESSAGESIZE] = {0x90, 60-pitch_diff, 90};
+   //notemessage[0] = channel_num;   // channel
+   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, notemessage);
+
+   playPacketListOnAllDevices(midiout, packetlist);
+}
+
+
+void play_note_off(MIDIPortRef &midiout)
+{
+   int channel_num = (0x90);
+   int channel_offset = 1;
+   int channel_num_2 = (0x90 + channel_offset);
+
+#define pitch_diff -5
+   // Prepare a MIDI Note-On message to send 
+   MIDITimeStamp timestamp = mach_absolute_time(); 
+   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
+   MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
+   MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
+
+
+   // Prepare a MIDI Note-OFF message to send 
+   Byte note_message_off[MESSAGESIZE] = {0x90, 60-pitch_diff, 0x00};
+   //note_message_off[0] = channel_num;   // channel
+   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, note_message_off);
+
+   playPacketListOnAllDevices(midiout, packetlist);
+
+
+   
+   //Byte notemessage[MESSAGESIZE] = {0x90, 60-pitch_diff, 90};
+   ////notemessage[0] = channel_num;   // channel
+   //currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, timestamp, MESSAGESIZE, notemessage);
+
+   //playPacketListOnAllDevices(midiout, packetlist);
+}
+
+
+
+
+
 int main(void) {
 
    // Prepare MIDI Interface Client/Port for writing MIDI data:
@@ -48,30 +105,26 @@ int main(void) {
        exit(status);
    }
 
-   int channel_num = (0x90);
-   int channel_offset = 0;
-   int channel_num_2 = (0x90 + channel_offset);
-
-#define pitch_diff -5
 
    // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
 
-   // Prepare a MIDI Note-On message to send 
-   MIDITimeStamp timestamp = mach_absolute_time(); 
-   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
-   MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
-   MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
-   Byte notemessage[MESSAGESIZE] = {0x90, 60-pitch_diff, 90};
-   notemessage[0] = channel_num;   // channel
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
-         currentpacket, timestamp, MESSAGESIZE, notemessage);
+   play_note_on(midiout);
 
+   sleep(1);
+
+   play_note_off(midiout);
+
+
+   /*
+   //setup_a_second_note(Byte *notemessage, int channel_num_2, int pitch_diff, MIDITimeStamp &timestamp, MIDIPacket *currentpacket, Byte *buffer, MIDIPacketList *packetlist);
+   setup_a_second_note(notemessage, channel_num_2, pitch_diff, timestamp, currentpacket, buffer, packetlist);
+   //setup_a_second_note();
    // setup another note to play one second later with same loudness
-   notemessage[0] = channel_num_2;   // channel
-   notemessage[1] = 67-pitch_diff;            // pitch = G4
-   timestamp += 1000000000;        // one billion nanoseconds later
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
-          currentpacket, timestamp, MESSAGESIZE, notemessage);
+   //notemessage[0] = channel_num_2;   // channel
+   //notemessage[1] = 67-pitch_diff;            // pitch = G4
+   //timestamp += 1000000000;        // one billion nanoseconds later
+   //currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
+          //currentpacket, timestamp, MESSAGESIZE, notemessage);
 
    // turn off the second note played one second later
    notemessage[0] = channel_num_2;   // channel
@@ -91,8 +144,10 @@ int main(void) {
 
    // send the MIDI data and don't wait around for a little while
    // to see what happens.
-   playPacketListOnAllDevices(midiout, packetlist);
-   sleep(5);
+   */
+
+   //playPacketListOnAllDevices(midiout, packetlist);
+
 
    if ((status = MIDIPortDispose(midiout))) {
       printf("Error trying to close MIDI output port: %d\n", status);
