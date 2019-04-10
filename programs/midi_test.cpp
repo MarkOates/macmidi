@@ -196,18 +196,26 @@ class SongFactory
 public:
    static void play_song_1(MidiContext &midi_context)
    {
+      setup_short_stacato_patches(midi_context);
+
+      BYTE velocity = 60;
+
       BYTE pitch = 60;
-      play_note_on(midi_context.get_midiout(), pitch);
+      play_note_on(midi_context.get_midiout(), pitch, velocity);
       sleep(0.5f);
       play_note_off(midi_context.get_midiout(), pitch);
    }
 
    static void play_song_2(MidiContext &midi_context)
    {
+      setup_short_stacato_patches(midi_context);
+
+      BYTE velocity = 60;
+
       std::vector<BYTE> pitches = {60, 62, 64, 67, 60, 62, 64, 67};
       for (auto &pitch : pitches)
       {
-         play_note_on(midi_context.get_midiout(), pitch);
+         play_note_on(midi_context.get_midiout(), pitch, velocity);
          sleep(0.15f);
          play_note_off(midi_context.get_midiout(), pitch);
       }
@@ -215,14 +223,18 @@ public:
 
    static void play_song_3(MidiContext &midi_context)
    {
+      setup_short_stacato_patches(midi_context);
+
       BYTE violin_channel = 0x00;
       BYTE cello_channel = 0x03;
+
+      BYTE velocity = 60;
 
       std::vector<BYTE> pitches = {60, 62, 64, 67, 60, 62, 64, 67};
       for (auto &pitch : pitches)
       {
          BYTE channel = violin_channel;
-         play_note_on(midi_context.get_midiout(), pitch, 90, violin_channel);
+         play_note_on(midi_context.get_midiout(), pitch, velocity, violin_channel);
          sleep(0.15f);
          play_note_off(midi_context.get_midiout(), pitch, violin_channel);
       }
@@ -233,10 +245,38 @@ public:
       for (auto &pitch : pitches2)
       {
          BYTE channel = cello_channel;
-         play_note_on(midi_context.get_midiout(), pitch, 90, cello_channel);
+         play_note_on(midi_context.get_midiout(), pitch, velocity, cello_channel);
          sleep(0.15f);
          play_note_off(midi_context.get_midiout(), pitch, cello_channel);
       }
+   }
+
+   static void setup_short_stacato_patches(MidiContext &midi_context)
+   {
+      BYTE violin_channel = 0x00;
+      BYTE cello_channel = 0x03;
+      BYTE bass_channel = 0x04;
+
+      BYTE velocity = 60;
+
+      std::vector<MidiNote> notes = {
+
+         {60-24, velocity, violin_channel}, // vel range
+         {60-36, velocity, violin_channel}, // articulation
+         {60-24+5, velocity, violin_channel}, // type
+
+         {60-36, velocity, cello_channel}, // vel range
+         {60+24, velocity, cello_channel}, // articulation
+         {60+24+5+1, velocity, cello_channel}, // type
+
+         {60+24, velocity, bass_channel}, // vel range
+         {60+12, velocity, bass_channel}, // articulation
+         {60+24+5+1, velocity, bass_channel}, // type
+      };
+
+      for (auto &note : notes) play_note_on(midi_context.get_midiout(), note.pitch, note.velocity, note.channel);
+      sleep(0.001f);
+      for (auto &note : notes) play_note_off(midi_context.get_midiout(), note.pitch, note.channel);
    }
 
    static void setup_long_soft_patches(MidiContext &midi_context)
