@@ -35,6 +35,27 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 #define BYTE unsigned char
 
 
+class PitchTransformer
+{
+public:
+   static std::vector<BYTE> reverse(std::vector<BYTE> notes)
+   {
+      std::reverse(notes.begin(), notes.end());
+      return notes;
+   }
+
+   static std::vector<BYTE> octave_down(std::vector<BYTE> notes)
+   {
+      std::vector<BYTE> result;
+      for (BYTE &note : notes)
+      {
+         result.push_back(note + (unsigned char)(-12));
+      }
+      return result;
+   }
+};
+
+
 class MidiContext
 {
 private:
@@ -173,6 +194,27 @@ public:
          play_note_off(midi_context.get_midiout(), pitch);
       }
    }
+
+   static void play_song_3(MidiContext &midi_context)
+   {
+      std::vector<BYTE> pitches = {60, 62, 64, 67, 60, 62, 64, 67};
+      for (auto &pitch : pitches)
+      {
+         play_note_on(midi_context.get_midiout(), pitch);
+         sleep(0.15f);
+         play_note_off(midi_context.get_midiout(), pitch);
+      }
+
+      std::vector<BYTE> pitches2 = {60, 64, 67, 68, 60, 64, 67, 68};
+      pitches2 = PitchTransformer::octave_down(pitches2);
+      pitches2 = PitchTransformer::reverse(pitches2);
+      for (auto &pitch : pitches2)
+      {
+         play_note_on(midi_context.get_midiout(), pitch);
+         sleep(0.15f);
+         play_note_off(midi_context.get_midiout(), pitch);
+      }
+   }
 };
 
 
@@ -182,7 +224,7 @@ int main(void)
    MidiContext midi_context;
    midi_context.initialize();
 
-   SongFactory::play_song_2(midi_context);
+   SongFactory::play_song_3(midi_context);
 
    midi_context.shutdown();
    printf("Program appears to have run successfully.");
