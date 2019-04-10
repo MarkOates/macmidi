@@ -92,13 +92,15 @@ int main(void) {
 
    // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
 
-   BYTE byte_pitch = 60;
 
-   play_note_on(midiout, byte_pitch);
+
+   BYTE pitch = 60;
+
+   play_note_on(midiout, pitch);
 
    sleep(0.5f);
 
-   play_note_off(midiout, byte_pitch);
+   play_note_off(midiout, pitch);
 
 
    /*
