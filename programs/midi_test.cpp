@@ -239,8 +239,38 @@ public:
       }
    }
 
+   static void setup_long_soft_patches(MidiContext &midi_context)
+   {
+      BYTE violin_channel = 0x00;
+      BYTE cello_channel = 0x03;
+      BYTE bass_channel = 0x04;
+
+      BYTE velocity = 60;
+
+      std::vector<MidiNote> notes = {
+
+         {60-24+1, velocity, violin_channel}, // vel range
+         {60-36+1, velocity, violin_channel}, // articulation
+         {60-24+5, velocity, violin_channel}, // type
+
+         {60-36+1, velocity, cello_channel}, // vel range
+         {60+24+1, velocity, cello_channel}, // articulation
+         {60+24+5, velocity, cello_channel}, // type
+
+         {60+24+1, velocity, bass_channel}, // vel range
+         {60+12+1, velocity, bass_channel}, // articulation
+         {60+24+5, velocity, bass_channel}, // type
+      };
+
+      for (auto &note : notes) play_note_on(midi_context.get_midiout(), note.pitch, note.velocity, note.channel);
+      sleep(0.001f);
+      for (auto &note : notes) play_note_off(midi_context.get_midiout(), note.pitch, note.channel);
+   }
+
    static void play_song_4(MidiContext &midi_context)
    {
+      setup_long_soft_patches(midi_context);
+
       BYTE violin_channel = 0x00;
       BYTE cello_channel = 0x03;
       BYTE bass_channel = 0x04;
@@ -273,6 +303,7 @@ int main(void)
    MidiContext midi_context;
    midi_context.initialize();
 
+   //SongFactory::setup_long_soft_patches(midi_context);
    SongFactory::play_song_4(midi_context);
 
    midi_context.shutdown();
