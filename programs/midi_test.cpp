@@ -135,21 +135,22 @@ public:
 
 
 
-void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90)
+void play_note_on(MIDIPortRef &midiout, BYTE pitch, BYTE velocity=90, BYTE channel=0x00)
 {
+   const unsigned int CHANNEL_BITS = 0x0F;
    // Prepare a MIDI Note-On message to send 
    BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
    MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
    MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
 
-   BYTE notemessage[MESSAGESIZE] = {0x90, pitch, velocity};
+   BYTE notemessage[MESSAGESIZE] = {(BYTE)(0x90 + channel), pitch, velocity};
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, mach_absolute_time(), MESSAGESIZE, notemessage);
 
    MidiContext::playPacketListOnAllDevices(midiout, packetlist);
 }
 
 
-void play_note_off(MIDIPortRef &midiout, BYTE pitch)
+void play_note_off(MIDIPortRef &midiout, BYTE pitch, BYTE channel=0x00)
 {
    // Prepare a MIDI Note-On message to send 
    BYTE buffer[64];             // storage space for MIDI Packets (max 65536)
@@ -158,7 +159,7 @@ void play_note_off(MIDIPortRef &midiout, BYTE pitch)
 
 
    // Prepare a MIDI Note-OFF message to send 
-   BYTE note_message_off[MESSAGESIZE] = {0x90, pitch, 0x00};
+   BYTE note_message_off[MESSAGESIZE] = {(BYTE)(0x90 + channel), pitch, 0x00};
    currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), currentpacket, mach_absolute_time(), MESSAGESIZE, note_message_off);
 
    MidiContext::playPacketListOnAllDevices(midiout, packetlist);
@@ -197,12 +198,16 @@ public:
 
    static void play_song_3(MidiContext &midi_context)
    {
+      BYTE violin_channel = 0x00;
+      BYTE cello_channel = 0x03;
+
       std::vector<BYTE> pitches = {60, 62, 64, 67, 60, 62, 64, 67};
       for (auto &pitch : pitches)
       {
-         play_note_on(midi_context.get_midiout(), pitch);
+         BYTE channel = violin_channel;
+         play_note_on(midi_context.get_midiout(), pitch, 90, violin_channel);
          sleep(0.15f);
-         play_note_off(midi_context.get_midiout(), pitch);
+         play_note_off(midi_context.get_midiout(), pitch, violin_channel);
       }
 
       std::vector<BYTE> pitches2 = {60, 64, 67, 68, 60, 64, 67, 68};
@@ -210,9 +215,10 @@ public:
       pitches2 = PitchTransformer::reverse(pitches2);
       for (auto &pitch : pitches2)
       {
-         play_note_on(midi_context.get_midiout(), pitch);
+         BYTE channel = cello_channel;
+         play_note_on(midi_context.get_midiout(), pitch, 90, cello_channel);
          sleep(0.15f);
-         play_note_off(midi_context.get_midiout(), pitch);
+         play_note_off(midi_context.get_midiout(), pitch, cello_channel);
       }
    }
 };
