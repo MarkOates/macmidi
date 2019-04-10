@@ -71,6 +71,40 @@ void sleep(float seconds)
 
 
 
+class MidiContext
+{
+private:
+   MIDIClientRef midiclient;
+   MIDIPortRef midiout;
+
+public:
+   MidiContext()
+      : midiclient(ZERO_NULL)
+      , midiout(ZERO_NULL)
+   {}
+
+   void initialize()
+   {
+      OSStatus status;
+
+      if ((status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient))) {
+          printf("Error trying to create MIDI Client structure: %d\n", status);
+          //printf("%s\n", GetMacOSStatusErrorString(status));
+          exit(status);
+      }
+      if ((status = MIDIOutputPortCreate(midiclient, CFSTR("OuTpUt"), &midiout))) {
+          printf("Error trying to create MIDI output port: %d\n", status);
+          //printf("%s\n", GetMacOSStatusErrorString(status));
+          exit(status);
+      }
+   }
+
+   MIDIPortRef &get_midiout() { return midiout; }
+   MIDIClientRef &get_midiclient() { return midiclient; }
+};
+
+
+
 int main(void) {
 
    // Prepare MIDI Interface Client/Port for writing MIDI data:
@@ -94,48 +128,22 @@ int main(void) {
 
 
 
+   MidiContext midi_context;
+   midi_context.initialize();
+
+
+
    BYTE pitch = 60;
 
-   play_note_on(midiout, pitch);
+   play_note_on(midi_context.get_midiout(), pitch);
 
    sleep(0.5f);
 
-   play_note_off(midiout, pitch);
+   play_note_off(midi_context.get_midiout(), pitch);
 
 
-   /*
-   //setup_a_second_note(Byte *notemessage, int channel_num_2, int pitch_diff, MIDITimeStamp &timestamp, MIDIPacket *currentpacket, Byte *buffer, MIDIPacketList *packetlist);
-   setup_a_second_note(notemessage, channel_num_2, pitch_diff, timestamp, currentpacket, buffer, packetlist);
-   //setup_a_second_note();
-   // setup another note to play one second later with same loudness
-   //notemessage[0] = channel_num_2;   // channel
-   //notemessage[1] = 67-pitch_diff;            // pitch = G4
-   //timestamp += 1000000000;        // one billion nanoseconds later
-   //currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
-          //currentpacket, timestamp, MESSAGESIZE, notemessage);
 
-   // turn off the second note played one second later
-   notemessage[0] = channel_num_2;   // channel
-   notemessage[1] = 67-pitch_diff;            // pitch = G4
-   notemessage[2] = 0;             // turn off the note
-   timestamp += 1000000000;        // one billion nanoseconds later
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
-          currentpacket, timestamp, MESSAGESIZE, notemessage);
-
-   // turn off the first note played one second later
-   notemessage[0] = channel_num;   // channel
-   notemessage[1] = 60-pitch_diff;            // pitch = C4
-   notemessage[2] = 0;             // turn off the note
-   timestamp += 1000000000;        // one billion nanoseconds later
-   currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
-          currentpacket, timestamp, MESSAGESIZE, notemessage);
-
-   // send the MIDI data and don't wait around for a little while
-   // to see what happens.
-   */
-
-   //playPacketListOnAllDevices(midiout, packetlist);
-
+   // shutdown MIDI
 
    if ((status = MIDIPortDispose(midiout))) {
       printf("Error trying to close MIDI output port: %d\n", status);
