@@ -150,15 +150,26 @@ void sleep(float seconds)
 
 
 
+class SongFactory
+{
+public:
+   static void play_song_1(MidiContext &midi_context)
+   {
+      BYTE pitch = 60;
+      play_note_on(midi_context.get_midiout(), pitch);
+      sleep(0.5f);
+      play_note_off(midi_context.get_midiout(), pitch);
+   }
+};
+
+
+
 int main(void)
 {
    MidiContext midi_context;
    midi_context.initialize();
 
-   BYTE pitch = 60;
-   play_note_on(midi_context.get_midiout(), pitch);
-   sleep(0.5f);
-   play_note_off(midi_context.get_midiout(), pitch);
+   SongFactory::play_song_1(midi_context);
 
    midi_context.shutdown();
    printf("Program appears to have run successfully.");
