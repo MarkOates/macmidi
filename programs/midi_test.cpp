@@ -125,28 +125,6 @@ public:
 
 
 int main(void) {
-
-   // Prepare MIDI Interface Client/Port for writing MIDI data:
-   MIDIClientRef midiclient  = ZERO_NULL;
-   MIDIPortRef   midiout     = ZERO_NULL;
-   OSStatus status;
-
-   if ((status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient))) {
-       printf("Error trying to create MIDI Client structure: %d\n", status);
-       //printf("%s\n", GetMacOSStatusErrorString(status));
-       exit(status);
-   }
-   if ((status = MIDIOutputPortCreate(midiclient, CFSTR("OuTpUt"), &midiout))) {
-       printf("Error trying to create MIDI output port: %d\n", status);
-       //printf("%s\n", GetMacOSStatusErrorString(status));
-       exit(status);
-   }
-
-
-   // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
-
-
-
    MidiContext midi_context;
    midi_context.initialize();
 
@@ -162,21 +140,7 @@ int main(void) {
 
 
 
-   // shutdown MIDI
-
-   if ((status = MIDIPortDispose(midiout))) {
-      printf("Error trying to close MIDI output port: %d\n", status);
-      //printf("%s\n", GetMacOSStatusErrorString(status));
-      exit(status);
-   }
-   midiout = ZERO_NULL;
-
-   if ((status = MIDIClientDispose(midiclient))) {
-      printf("Error trying to close MIDI client: %d\n", status);
-      //printf("%s\n", GetMacOSStatusErrorString(status));
-      exit(status);
-   }
-   midiclient = ZERO_NULL;
+   midi_context.shutdown();
 
    printf("Program appears to have run successfully.");
 
