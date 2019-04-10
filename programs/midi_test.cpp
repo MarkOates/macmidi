@@ -31,7 +31,7 @@ void playPacketListOnAllDevices   (MIDIPortRef     midiout,
 /////////////////////////////////////////////////////////////////////////
 
 
-void play_note_on(MIDIPortRef &midiout, Byte pitch=60-(-5))
+void play_note_on(MIDIPortRef &midiout, Byte pitch)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
@@ -47,7 +47,7 @@ void play_note_on(MIDIPortRef &midiout, Byte pitch=60-(-5))
 }
 
 
-void play_note_off(MIDIPortRef &midiout, Byte pitch=60-(-5))
+void play_note_off(MIDIPortRef &midiout, Byte pitch)
 {
    // Prepare a MIDI Note-On message to send 
    MIDITimeStamp timestamp = mach_absolute_time(); 
@@ -74,6 +74,11 @@ void play_note_off(MIDIPortRef &midiout, Byte pitch=60-(-5))
 
 
 
+void sleep(float seconds)
+{
+   usleep(seconds * 1000000);
+}
+
 
 
 int main(void) {
@@ -97,11 +102,13 @@ int main(void) {
 
    // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
 
-   play_note_on(midiout);
+   Byte pitch = 60;
 
-   sleep(1);
+   play_note_on(midiout, pitch);
 
-   play_note_off(midiout);
+   sleep(0.5f);
+
+   play_note_off(midiout, pitch);
 
 
    /*
